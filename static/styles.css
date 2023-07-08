@@ -1,0 +1,64 @@
+.container {
+    text-align: center;
+    margin-top: 50px;
+  }
+
+
+  #logTable {
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  #logTable th,
+  #logTable td {
+    padding: 5px;
+    text-align: center;
+  }
+  
+  #logTable th:first-child,
+  #logTable td:first-child {
+    text-align: right;
+  }
+
+  body {
+    font-family: 'Ubuntu Mono', monospace;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+  
+  .date-switcher {
+    margin-top: 20px;
+  }
+
+  .submit-button{
+    color: black;
+  }
+
+  #description {
+    margin-top: 10px;
+    color: gray
+  }
+  .submit-button:hover {
+    color: green;
+  }
+
+  button {
+    font-size: 18px;
+    padding: 5px 5px;
+    border: none; /* Remove border */
+    background: none; /* Remove background */
+    cursor: pointer;
+    color: blue
+  }
+  
+  #dateDisplay {
+    margin: 0 5px;
+    font-size: 20px;
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  

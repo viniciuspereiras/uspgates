@@ -1,3 +1,6 @@
+
+const rightButton = document.getElementById('rightButton');
+
 const today = new Date(Date());
 today.setHours(3, 0, 0, 0);
 
@@ -15,6 +18,8 @@ function formatDate(date) {
   }
 
 function incrementDate() {
+    if (currentDate.toString() === today.toString())
+        return ;
     currentDate.setDate(currentDate.getDate()+1);
     updateDateDisplay();
     clearTable();
@@ -37,8 +42,12 @@ function updateDescription(text) {
 
 
 function updateDateDisplay() {
-  const displayDate = formatDate(currentDate);
-  document.getElementById("dateDisplay").textContent = displayDate;
+    const displayDate = formatDate(currentDate);
+    document.getElementById("dateDisplay").textContent = displayDate;
+    if (currentDate.toString() === today.toString())
+        rightButton.classList.add('disabled');
+    else if (rightButton.classList.contains('disabled'))
+        rightButton.classList.remove('disabled');
 }
 
 function sendRequest() {

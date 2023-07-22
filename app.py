@@ -34,16 +34,16 @@ def send_status():
     status_do_portao = data['status']
     date_time = data['date_time']
     if date_time != datetime.now().strftime('%Y-%m-%d'):
-        return make_response('{"operation": "error", "description": "Data invalida"}', 500)
+        return make_response('{"operation": "error", "description": "Data invalida"}', 400)
 
     user_cookie = request.cookies.get('session')
     if status_do_portao not in ['0', '1']:
-        return make_response('{"operation": "error", "description": "Status invalido"}', 500)
+        return make_response('{"operation": "error", "description": "Status invalido"}', 400)
     #check if this user already sended a status in last 3 hours
     three_hours_ago = datetime.now() - timedelta(hours=3)
     status = db_session.query(Status).filter(Status.timestamp >= three_hours_ago).filter(Status.user_session == user_cookie).first()
     if status:
-        return make_response('{"operation": "error", "description": "Status ja enviado nas ultimas 3 horas"}', 500)
+        return make_response('{"operation": "error", "description": "Status ja enviado nas ultimas 3 horas"}', 429)
     new_status = Status(timestamp=timestamp, status=status_do_portao, user_session=user_cookie)
     db_session.add(new_status)
     db_session.commit()
@@ -72,9 +72,9 @@ def get_status():
             response.headers['Content-Type'] = 'application/json'
             return response
         else:
-            return make_response('{"operation": "error", "description": "Nenhum status encontrado"}', 500)
+            return make_response('{"operation": "error", "description": "Nenhum status encontrado"}', 404)
     else:
-        return make_response('{"operation": "error", "description": "Nenhum status encontrado"}', 500)
+        return make_response('{"operation": "error", "description": "Nenhum status encontrado"}', 404)
 
 
 

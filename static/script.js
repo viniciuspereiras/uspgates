@@ -1,5 +1,9 @@
-let currentDate = new Date();
+const today = new Date(Date());
+today.setHours(3, 0, 0, 0);
+
+let currentDate = structuredClone(today);
 let displayDate = formatDate(currentDate);
+
 document.getElementById("dateDisplay").textContent = displayDate;
 
 function formatDate(date) {
@@ -11,16 +15,11 @@ function formatDate(date) {
   }
 
 function incrementDate() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  if (currentDate.getTime() < today.getTime()) {
-    currentDate.setDate(currentDate.getDate() + 1);
+    currentDate.setDate(currentDate.getDate()+1);
     updateDateDisplay();
     clearTable();
-    clearDescription();
     sendRequest();
-  }
+    clearDescription();
 }
 
 function decrementDate() {
@@ -74,73 +73,73 @@ function sendRequest() {
     });
 }
 
-    function clearDescription() {
-        const descriptionDiv = document.getElementById("description");
-        descriptionDiv.textContent = "";
-    }
+function clearDescription() {
+    const descriptionDiv = document.getElementById("description");
+    descriptionDiv.textContent = "";
+}
 
-    function clearTable() {
-        const logTableBody = document.getElementById("logTableBody");
-        logTableBody.innerHTML = "";
-    }
-  
-  function formatTimestamp(timestamp) {
+function clearTable() {
+    const logTableBody = document.getElementById("logTableBody");
+    logTableBody.innerHTML = "";
+}
+
+function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     const hour = date.getHours();
     // if minute < 10, add a 0 in front of it
     const minute = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
     const dd = String(date.getDate()).padStart(2, '0');
     const mm = String(date.getMonth() + 1).padStart(2, '0');
-  
+
     return `${hour}:${minute}`;
-  }
-  
-  function updateLogTable(data) {
+}
+
+function updateLogTable(data) {
     const logTableBody = document.getElementById("logTableBody");
-  
+
     // Clear existing rows
     logTableBody.innerHTML = "";
     clearDescription();
-  
+
     // Convert data to an array if it's not already
     data = Array.from(data);
-  
+
     // Sort data by timestamp in descending order
     data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-  
+
     // Iterate through status entries
     data.forEach(entry => {
       const row = document.createElement("tr");
-  
+
       const statusCell = document.createElement("td");
       const statusText = entry.status === 1 ? "  " : "  ";
       const statusEmoji = entry.status === 1 ? "✅" : "❌";
       const statusColor = entry.status === 1 ? "green" : "red";
       statusCell.innerHTML = `${statusEmoji} <span style="color: ${statusColor};">${statusText}</span>`;
       row.appendChild(statusCell);
-  
+
       const timestampCell = document.createElement("td");
       timestampCell.textContent = formatTimestamp(entry.timestamp);
       row.appendChild(timestampCell);
-  
+
       logTableBody.appendChild(row);
     });
 
     updateSubmissionCount(data);
-  }
-  
-  function updateSubmissionCount(data) {
+}
+
+function updateSubmissionCount(data) {
     const submissionCount = data.length;
-  
+
     const submissionCountElement = document.getElementById("submissionCount");
     submissionCountElement.textContent = `Número de status enviados nessa data: ${submissionCount}`;
-  }
-  
-  function sendStatus(status) {
+}
+
+function sendStatus(status) {
     // Make request to API
     const url = "/api/send_status";
     // Replace the above URL with the actual URL of your API
-  
+
 
     let selectedDate = document.getElementById("dateDisplay").textContent + "/" + currentDate.getFullYear();
     selectedDate = selectedDate.slice(6, 10) + "-" + selectedDate.slice(3, 5) + "-" + selectedDate.slice(0, 2);
@@ -150,7 +149,7 @@ function sendRequest() {
       status: status,
       date_time: selectedDate
     };
-  
+
     // Use fetch or another AJAX method to make the request
     fetch(url, {
       method: "POST",
@@ -167,18 +166,22 @@ function sendRequest() {
       .catch(error => {
         console.log(error);
       });
-  }
-  
-  const statusForm = document.getElementById("statusForm");
-  statusForm.addEventListener("submit", function(event) {
+}
+
+const statusForm = document.getElementById("statusForm");
+statusForm.addEventListener("submit", function(event) {
     event.preventDefault();
     const statusSelect = document.getElementById("status");
     const status = statusSelect.value;
     sendStatus(status);
-  });
-  
-  // Call sendRequest() initially to make the initial API request
-  sendRequest();
+});
 
-  // Update the table every 3 second
-  setInterval(sendRequest, 3000);
+// Call sendRequest() initially to make the initial API request
+sendRequest();
+
+// Update the table every 3 second
+setInterval( () => {
+    if (currentDate.toString() === today.toString())
+        sendRequest();
+
+}, 3000);
